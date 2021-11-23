@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react';
 import axios from 'axios';
 import * as d3 from "d3";
+import Club from './components/Club';
 
 class App extends React.Component {
   constructor(props) {
@@ -54,9 +55,27 @@ class App extends React.Component {
     this.callAPI();
   }
 
+  handlePositionGetting(position) {
+    console.log(position)
+  }
+
+  getCurrentPosition(){
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(this.handlePositionGetting);
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }
+
   render() {
+    const clubListItems = this.state.clubs.map((club) => {
+      return <Club club={club} key={club.key} />
+    });
+
     return (
       <div>
+        <button onClick={getCurrentPosition}>Nära mig</button>
+        {clubListItems}
       </div>
     );
   }

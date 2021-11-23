@@ -16,6 +16,7 @@ router.get('/', async function(req, res, next) {
 
   var withLocations = await Promise.all(members.map(async (member) => {
     member.location = await geocoder.geocode(member.Kommun);
+    member.key = member['E-post']+member.Kommun;
     return member;
   }));
 
