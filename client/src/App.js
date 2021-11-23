@@ -17,7 +17,6 @@ class App extends React.Component {
     axios.get(`http://localhost:9000`)
       .then(res => {
         this.setState({ clubs: res.data });
-        this.createChart();
       })
   }
 
@@ -57,10 +56,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div >
-        <svg width="1000" height="1000">
-          <g ref={this.chartElement}></g>
-        </svg>
+      <div>
       </div>
     );
   }
