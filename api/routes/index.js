@@ -15,12 +15,17 @@ router.get('/', async function(req, res, next) {
     });
 
   var withLocations = await Promise.all(members.map(async (member) => {
-    member.location = await geocoder.geocode(member.Kommun);
-    member.key = member['E-post']+member.Kommun;
+    member.location = await geocoder.geocode(member.city);
     return member;
   }));
 
-  res.json(withLocations);
+  var transferLocations = withLocations.map((member) => {
+    member.latitude = member.location[0].latitude;
+    member.longitude = member.location[0].longitude;
+    return member;
+  })
+
+  res.json(transferLocations);
 });
 
 module.exports = router;

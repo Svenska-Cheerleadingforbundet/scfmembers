@@ -3,14 +3,14 @@ import React from 'react';
 import axios from 'axios';
 import * as d3 from "d3";
 import Club from './components/Club';
+import sortByDistance from 'sort-by-distance'
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.chartElement = React.createRef();
     this.state = {
-      clubs: [],
-      data: [4, 8, 15, 16, 23, 42]
+      clubs: []
     };
   }
 
@@ -35,46 +35,47 @@ class App extends React.Component {
         let geoGenerator = d3.geoPath().projection(projection);
 
         context.selectAll('path')
-            .data(res.data.features)
-            .join('path')
-            .attr('d', geoGenerator);
+          .data(res.data.features)
+          .join('path')
+          .attr('d', geoGenerator);
 
         context.selectAll("circle")
-        .data(this.state.clubs)
-        .enter()
-        .append("circle")
-        .attr("r", "5")
-        .attr("fill", "red")
-        .attr("transform", function(d) {
-          return "translate(" + projection([d.location[0].longitude, d.location[0].latitude]) + ")";
-        })
+          .data(this.state.clubs)
+          .enter()
+          .append("circle")
+          .attr("r", "5")
+          .attr("fill", "red")
+          .attr("transform", function (d) {
+            return "translate(" + projection([d.location[0].longitude, d.location[0].latitude]) + ")";
+          })
       })
+  }
+
+  closeToMe = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const opts = {
+        yName: 'latitude',
+        xName: 'longitude'
+      }
+
+      const origin = { longitude: position.coords.longitude, latitude: position.coords.latitude }
+      var sorted = sortByDistance(origin, this.state.clubs, opts);
+      this.setState({ clubs: sorted });
+    });
   }
 
   componentDidMount() {
     this.callAPI();
   }
 
-  handlePositionGetting(position) {
-    console.log(position)
-  }
-
-  getCurrentPosition(){
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this.handlePositionGetting);
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
-  }
-
   render() {
     const clubListItems = this.state.clubs.map((club) => {
-      return <Club club={club} key={club.key} />
+      return <Club club={club} key={club.id} />
     });
 
     return (
       <div>
-        <button onClick={getCurrentPosition}>Nära mig</button>
+        <button onClick={this.closeToMe}>Nära mig</button>
         {clubListItems}
       </div>
     );

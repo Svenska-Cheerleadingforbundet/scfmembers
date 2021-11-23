@@ -3,7 +3,7 @@ import React from 'react';
 class Club extends React.Component {
     render(){
         return <div>
-            <p>{this.props.club.Organisationsnamn}</p>
+            <p><a href={this.props.club.website}>{this.props.club.name}</a></p>
             </div>
     }
 }
