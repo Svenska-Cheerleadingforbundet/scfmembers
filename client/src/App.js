@@ -14,7 +14,7 @@ class App extends React.Component {
   }
 
   callAPI() {
-    axios.get(`http://localhost:1337/clubs`)
+    axios.get(`http://localhost:9000`)
       .then(res => {
         this.setState({ clubs: res.data });
         this.createChart();
