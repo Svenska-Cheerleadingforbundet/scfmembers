@@ -15,7 +15,7 @@ class App extends React.Component {
   }
 
   callAPI() {
-    axios.get(`http://localhost:9000`)
+    axios.get(`https://cheerleading.herokuapp.com/members`)
       .then(res => {
         this.setState({ clubs: res.data });
       })
