@@ -1,24 +1,44 @@
-import './App.css';
 import React from 'react';
 import axios from 'axios';
 import * as d3 from "d3";
 import Club from './components/Club';
-import sortByDistance from 'sort-by-distance'
+import sortByDistance from 'sort-by-distance';
+import { Button } from 'primereact/button';
+import 'primereact/resources/primereact.min.css';
+import 'primereact/resources/themes/lara-light-blue/theme.css';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.chartElement = React.createRef();
+
     this.state = {
       clubs: []
     };
   }
 
   callAPI() {
-    axios.get(`https://cheerleading.herokuapp.com/members`)
-      .then(res => {
-        this.setState({ clubs: res.data });
-      })
+    axios({
+      url: `https://cheerleading.herokuapp.com/members`,
+      transformResponse: [
+        ...axios.defaults.transformResponse,
+        function (data) {
+          var mapped = data.map(member => {
+            return {
+              name: member.name,
+              city: member.city,
+              email: member.email,
+              website: member.website,
+              latitude: member.location.latitude,
+              longitude: member.location.longitude,
+              id: member.id
+            }
+          });
+          return mapped;
+        }],
+    }).then(res => {
+      this.setState({ clubs: res.data });
+    });
   }
 
   createChart() {
@@ -59,6 +79,7 @@ class App extends React.Component {
       }
 
       const origin = { longitude: position.coords.longitude, latitude: position.coords.latitude }
+
       var sorted = sortByDistance(origin, this.state.clubs, opts);
       this.setState({ clubs: sorted });
     });
@@ -75,8 +96,15 @@ class App extends React.Component {
 
     return (
       <div>
-        <button onClick={this.closeToMe}>Nära mig</button>
-        {clubListItems}
+        <h1>Svenska Cheerleadingförbundets medlemsföreningar</h1>
+        <div className='scf-close-to-me-btn'>
+          <Button className='p-button-raised p-button-lg' onClick={this.closeToMe}>Sortera närmast mig först</Button></div>
+          <div className='scf-members-wrapper'>
+            {clubListItems}
+          </div>
+          <div className='scf-footer'>
+            Källa: <a href="https://cheerleading.se">Svenska Cheerleadingförbundet</a>
+          </div>
       </div>
     );
   }
