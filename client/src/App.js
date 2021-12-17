@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { setup } from 'axios-cache-adapter'
 import * as d3 from "d3";
 import Club from './components/Club';
 import sortByDistance from 'sort-by-distance';
@@ -15,10 +16,16 @@ class App extends React.Component {
     this.state = {
       clubs: []
     };
+
+    this.api = setup({
+      cache: {
+        maxAge: 15 * 60 * 1000
+      }
+    })
   }
 
   callAPI() {
-    axios({
+    this.api({
       url: `https://cheerleading.herokuapp.com/members`,
       transformResponse: [
         ...axios.defaults.transformResponse,
@@ -36,8 +43,8 @@ class App extends React.Component {
           });
           return mapped;
         }],
-    }).then(res => {
-      this.setState({ clubs: res.data });
+    }).then(response => {
+      this.setState({ clubs: response.data });
     });
   }
 

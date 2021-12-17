@@ -3,7 +3,7 @@ import React from 'react';
 class Club extends React.Component {
     getFormattedUrl() {
         let link = this.props.club.website;
-        if (link.search(/^http[s]?\:\/\//) == -1) {
+        if (link.search(/^http[s]?:\/\//) === -1) {
             link = 'http://' + link;
         }
         return link;
