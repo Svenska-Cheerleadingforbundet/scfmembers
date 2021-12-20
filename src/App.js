@@ -4,9 +4,6 @@ import { setup } from 'axios-cache-adapter'
 import * as d3 from "d3";
 import Club from './components/Club';
 import sortByDistance from 'sort-by-distance';
-import { Button } from 'primereact/button';
-import 'primereact/resources/primereact.min.css';
-import 'primereact/resources/themes/lara-light-blue/theme.css';
 
 class App extends React.Component {
   constructor(props) {
@@ -105,7 +102,7 @@ class App extends React.Component {
       <div>
         <h1>Svenska Cheerleadingförbundets medlemsföreningar</h1>
         <div className='scf-close-to-me-btn'>
-          <Button className='p-button-raised p-button-lg' onClick={this.closeToMe}>Sortera närmast mig först</Button></div>
+          <button onClick={this.closeToMe}>Sortera närmast mig först</button></div>
           <div className='scf-members-wrapper'>
             {clubListItems}
           </div>
