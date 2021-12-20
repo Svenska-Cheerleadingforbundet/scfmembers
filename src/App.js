@@ -3,7 +3,7 @@ import axios from 'axios';
 import { setup } from 'axios-cache-adapter'
 import * as d3 from "d3";
 import Club from './components/Club';
-import sortByDistance from 'sort-by-distance';
+import GeoCoordinate from 'geocoordinate/lib/coordinate';
 
 class App extends React.Component {
   constructor(props) {
@@ -33,8 +33,8 @@ class App extends React.Component {
               city: member.city,
               email: member.email,
               website: member.website,
-              latitude: member.location.latitude,
-              longitude: member.location.longitude,
+              latitude: parseFloat(member.location.latitude),
+              longitude: parseFloat(member.location.longitude),
               id: member.id
             }
           });
@@ -76,17 +76,46 @@ class App extends React.Component {
   }
 
   closeToMe = () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const opts = {
-        yName: 'latitude',
-        xName: 'longitude'
-      }
+    var locationSuccess = (position) => {
+      console.log(position);
+      const currentLocation = new GeoCoordinate({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      });
 
-      const origin = { longitude: position.coords.longitude, latitude: position.coords.latitude }
+      console.log(`https://www.openstreetmap.org/#map=18/${currentLocation.latitude()}/${currentLocation.longitude()}`);
 
-      var sorted = sortByDistance(origin, this.state.clubs, opts);
+      var sorted = this.state.clubs.sort((first, second) => {
+        var firstDistance,
+            secondDistance;
+        if(!isNaN(first.latitude) && !isNaN(first.longitude)) {
+          var firstGeocoordinate = new GeoCoordinate([first.latitude, first.longitude])
+          firstDistance = currentLocation.distanceTo(firstGeocoordinate);
+        }
+        
+        if(!isNaN(second.latitude) && !isNaN(second.longitude)) {
+          var secondGeocoordinate = new GeoCoordinate([second.latitude, second.longitude])
+          secondDistance = currentLocation.distanceTo(secondGeocoordinate);
+        }
+
+        return firstDistance - secondDistance;
+      })
+
       this.setState({ clubs: sorted });
-    });
+    };
+
+    var locationError = (error) => {
+      console.log(error);
+    }
+
+    var options = {
+      enableHighAccuracy: true,
+      timeout: 30000,
+      maximumAge: 0
+    };
+
+    
+    navigator.geolocation.getCurrentPosition(locationSuccess, locationError, options);
   }
 
   componentDidMount() {
