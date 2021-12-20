@@ -77,13 +77,10 @@ class App extends React.Component {
 
   closeToMe = () => {
     var locationSuccess = (position) => {
-      console.log(position);
       const currentLocation = new GeoCoordinate({
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
       });
-
-      console.log(`https://www.openstreetmap.org/#map=18/${currentLocation.latitude()}/${currentLocation.longitude()}`);
 
       var sorted = this.state.clubs.sort((first, second) => {
         var firstDistance,
@@ -110,7 +107,7 @@ class App extends React.Component {
 
     var options = {
       enableHighAccuracy: true,
-      timeout: 30000,
+      timeout: 3000,
       maximumAge: 0
     };
 
