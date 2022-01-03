@@ -34,12 +34,6 @@ h2 {
   text-align: center;
 }
 
-.scf-close-to-me-btn {
-  display: flex;
-  justify-content: center;
-  margin-block: 2em;
-}
-
 .scf-member-item {
   background-color: white;
   padding: 1em;
@@ -83,6 +77,11 @@ h2 {
   color: white;
 }
 
+.sorting-options {
+  text-align: center;
+  margin-block-end: 2em;
+}
+
 button {
   padding: 1em;
   background-color: var(--scf-yellow);
@@ -91,9 +90,15 @@ button {
   box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.5);
   font-weight: bold;
   font-size: 18px;
+  margin-inline-end: 1em;
 }
 
 button:hover {
   cursor: pointer;
+  background-color: var(--scf-darker-yellow);
+}
+
+button.active {
+  box-shadow: inset 3px 3px 5px 0px rgba(0,0,0,0.5);
   background-color: var(--scf-darker-yellow);
 }

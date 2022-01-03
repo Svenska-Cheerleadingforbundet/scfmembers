@@ -11,7 +11,8 @@ class App extends React.Component {
     this.chartElement = React.createRef();
 
     this.state = {
-      clubs: []
+      clubs: [],
+      sortmode: 'alphabetical'
     };
 
     this.api = setup({
@@ -98,7 +99,7 @@ class App extends React.Component {
         return firstDistance - secondDistance;
       })
 
-      this.setState({ clubs: sorted });
+      this.setState({ clubs: sorted, sortmode: 'closest' });
     };
 
     var locationError = (error) => {
@@ -115,6 +116,23 @@ class App extends React.Component {
     navigator.geolocation.getCurrentPosition(locationSuccess, locationError, options);
   }
 
+  alphabetical = () => {
+    var sorted = this.state.clubs.sort(function (a, b) {
+      var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+      var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+
+      // names must be equal
+  return 0;
+    });
+    this.setState({ clubs: sorted, sortmode: 'alphabetical' });
+  }
+
   componentDidMount() {
     this.callAPI();
   }
@@ -127,14 +145,17 @@ class App extends React.Component {
     return (
       <div>
         <h1>Svenska Cheerleadingförbundets medlemsföreningar</h1>
-        <div className='scf-close-to-me-btn'>
-          <button onClick={this.closeToMe}>Sortera närmast mig först</button></div>
-          <div className='scf-members-wrapper'>
-            {clubListItems}
-          </div>
-          <div className='scf-footer'>
-            Källa: <a href="https://cheerleading.se">Svenska Cheerleadingförbundet</a>
-          </div>
+        <div className="sorting-options">
+          <button className={`${this.state.sortmode == 'alphabetical' ? "active" : ""}`} onClick={this.alphabetical}>Bokstavsordning</button>
+          <button className={`${this.state.sortmode == 'closest' ? "active" : ""}`} onClick={this.closeToMe}>Närmast mig</button>
+        </div>
+        
+        <div className='scf-members-wrapper'>
+          {clubListItems}
+        </div>
+        <div className='scf-footer'>
+          Källa: <a href="https://cheerleading.se">Svenska Cheerleadingförbundet</a>
+        </div>
       </div>
     );
   }
