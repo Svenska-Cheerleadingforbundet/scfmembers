@@ -12,7 +12,8 @@ class App extends React.Component {
 
     this.state = {
       clubs: [],
-      sortmode: 'alphabetical'
+      sortmode: 'alphabetical',
+      loading: true
     };
 
     this.api = setup({
@@ -42,7 +43,7 @@ class App extends React.Component {
           return mapped;
         }],
     }).then(response => {
-      this.setState({ clubs: response.data });
+      this.setState({ clubs: response.data, loading: false });
     });
   }
 
@@ -142,14 +143,17 @@ class App extends React.Component {
       return <Club club={club} key={club.id} />
     });
 
+    let loadingProgress = this.state.loading? <div className="loader"></div> : '';
+    
     return (
       <div>
         <h1>Svenska Cheerleadingförbundets medlemsföreningar</h1>
+        
         <div className="sorting-options">
           <button className={`${this.state.sortmode == 'alphabetical' ? "active" : ""}`} onClick={this.alphabetical}>Bokstavsordning</button>
           <button className={`${this.state.sortmode == 'closest' ? "active" : ""}`} onClick={this.closeToMe}>Närmast mig</button>
         </div>
-        
+        {loadingProgress}
         <div className='scf-members-wrapper'>
           {clubListItems}
         </div>
