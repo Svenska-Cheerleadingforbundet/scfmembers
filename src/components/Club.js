@@ -10,9 +10,11 @@ class Club extends React.Component {
     }
 
     render(){
+        let distance = isNaN(this.props.club.distanceToCurrentLocation) ? '' : `(${Math.round(this.props.club.distanceToCurrentLocation / 1000)} km från dig)`;
+
         return <div className="scf-member-item">
             <h2>{this.props.club.name}</h2>
-            <div className='scf-member-item-city'>{this.props.club.city}</div>
+            <div className='scf-member-item-city'>{this.props.club.city} {distance}</div>
             <a target='_blank' href={`${this.getFormattedUrl()}`}>{this.props.club.website}</a>
             </div>
     }

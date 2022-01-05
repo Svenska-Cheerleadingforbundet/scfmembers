@@ -3,7 +3,7 @@ import axios from 'axios';
 import { setup } from 'axios-cache-adapter'
 import * as d3 from "d3";
 import Club from './components/Club';
-import GeoCoordinate from 'geocoordinate/lib/coordinate';
+import {GeoCoordinate} from 'geocoordinate';
 
 class App extends React.Component {
   constructor(props) {
@@ -84,20 +84,13 @@ class App extends React.Component {
         longitude: position.coords.longitude
       });
 
-      var sorted = this.state.clubs.sort((first, second) => {
-        var firstDistance,
-            secondDistance;
-        if(!isNaN(first.latitude) && !isNaN(first.longitude)) {
-          var firstGeocoordinate = new GeoCoordinate([first.latitude, first.longitude])
-          firstDistance = currentLocation.distanceTo(firstGeocoordinate);
-        }
-        
-        if(!isNaN(second.latitude) && !isNaN(second.longitude)) {
-          var secondGeocoordinate = new GeoCoordinate([second.latitude, second.longitude])
-          secondDistance = currentLocation.distanceTo(secondGeocoordinate);
-        }
+      this.state.clubs.forEach(club => {
+        var clubGeocoordinate = new GeoCoordinate([club.latitude, club.longitude]);
+        club.distanceToCurrentLocation = currentLocation.preciseDistanceTo(clubGeocoordinate);
+      });
 
-        return firstDistance - secondDistance;
+      var sorted = this.state.clubs.sort((first, second) => {
+        return first.distanceToCurrentLocation - second.distanceToCurrentLocation;
       })
 
       this.setState({ clubs: sorted, sortmode: 'closest' });
