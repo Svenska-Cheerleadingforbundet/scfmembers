@@ -1,1 +1,1 @@
-scfmembers
+Listar Svenska Cheerleadingförbundets medlemsföreningar
